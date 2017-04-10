@@ -96,6 +96,7 @@ export default {
                 let formData = new FormData($('image-form')[0]);
                 formData.append('file', $('#image-input')[0].files[0]);
                 for(let prop in employee){
+                  console.log(prop,employee[prop]);
                   formData.append(prop,employee[prop]);
                 }
                 this.$http.post('http://localhost/api/routes/images/upload.php', formData, {
@@ -124,7 +125,7 @@ export default {
                     if (response.ok) {
                         let submittedEmployee = response.body;
 
-                        this.submitImage(submittedEmployee);
+                        // this.submitImage(submittedEmployee);
                         this.entry.firstName = '';
                         this.entry.lastName = '';
                         this.entry.img = '';

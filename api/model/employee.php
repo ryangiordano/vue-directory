@@ -43,7 +43,7 @@ class Employee
     return json_encode($query->fetchObject());
   }
   public function edit($id){
-    $editEntry = $this->DB->prepare("UPDATE test.employees SET  WHERE user_id = $user_id");
+    $editEntry = $this->DB->prepare("UPDATE test.employees SET(firstName, lastName, img) VALUES(:firstName,:lastName,:img) WHERE id =".$id);
     $editEntry->bindValue(':firstName', $this->data['firstName'], PDO::PARAM_STR);
     $editEntry->bindValue(':lastName', $this->data['lastName'], PDO::PARAM_STR);
     $editEntry->bindValue(':img', $this->data['img'], PDO::PARAM_STR);
