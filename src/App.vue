@@ -17,18 +17,22 @@
                                 <input type="text" class="form-control" v-model="entry.lastName" id="lastName" placeholder="lastName">
                             </div>
                         </div>
+                        <!--This is where the image happens  -->
                         <div class="form-group">
                             <label for="image" class="col-lg-2 control-label">Image Link</label>
                             <div class="col-lg-10">
                                 <div class="" v-if="image">
                                     <img :src="image" height="150px;" />
                                     <button type="button" name="button" @click="removeImage">Remove Image</button>
-                                    <button type="button" name="button" @click="submitImage">Submit Image</button>
                                 </div>
-                                <div v-if="!image"><input type="file" @change="onFileChange"></div>
-                                <!-- <input type="text" class="form-control" v-model="entry.img"id="img" placeholder="img"> -->
+                                <div v-show="!image">
+                                    <form action="post" id="image-form" enctype="multipart/form-data">
+                                        <input id="image-input" type="file" @change="onFileChange" name="file">
+                                    </form>
+                                </div>
                             </div>
                         </div>
+                        <!--  End image happenings -->
 
                         <div class="form-group">
                             <div class="col-lg-10 col-lg-offset-2">
@@ -41,7 +45,7 @@
             </div>
         </div>
         <div class="row">
-            <button type="button" name="button" @click="get">Get</button>
+            <!-- <button type="button" name="button" @click="seedDB">Seed DB</button> -->
             <div class="col-md-6 col-md-offset-2">
                 <ul>
                     <li v-for="entry in data">{{entry.firstName}} {{entry.lastName}} <img :src="entry.img" alt="" style="height:150px"></li>
@@ -69,69 +73,85 @@ export default {
     },
     methods: {
         onFileChange(e) {
+            //takes the base 64 string of the file
             var files = e.target.files || e.dataTransfer.files;
             if (!files.length)
                 return;
+            console.log(files[0]);
             this.createImage(files[0]);
         },
         createImage(file) {
             var image = new Image();
             var reader = new FileReader();
-            var vm = this;
-
-            reader.onload = (e) => {
-                vm.image = e.target.result;
-            };
-
             reader.readAsDataURL(file);
+            reader.onload = (e) => {
+                this.image = e.target.result;
+            };
         },
         removeImage: function(e) {
             this.image = '';
         },
-        submitImage(e){
-          let formData = new FormData();
-          formData.append('image',(this.image));
-          this.$http.post('http://localhost:151/api/routes/image.php', formData,{
-                  emulateJSON: true
-              })
-              .then(response => {
-                  if (response.ok) {
-                    console.log(response);
-                  } else {
-                      console.error('there was an error')
-                  }
+        submitImage(employee) {
+            return new Promise((resolve, reject) => {
+                let formData = new FormData($('image-form')[0]);
+                formData.append('file', $('#image-input')[0].files[0]);
+                for(let prop in employee){
+                  formData.append(prop,employee[prop]);
+                }
+                this.$http.post('http://localhost/api/routes/images/upload.php', formData, {
+                        emulateJSON: true
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                          console.log(response.body);
+                            resolve()
+                        } else {
+                            reject(response);
+                        }
+                    });
+            })
 
-              })
         },
         submit(e) {
             e.preventDefault();
             let myHeaders = new Headers();
             myHeaders.append('Content-Type', 'application/json');
-            // this.$http.post('http://www.gocodigo.com/temporarypages/giordano/vue-directory/api/routes/entries.php',this.entry,[{headers:myHeaders}])
-            this.$http.post('http://localhost:151/api/routes/entries.php', this.entry, {
+            // this.$http.post('http://www.gocodigo.com/temporarypages/giordano/vue-directory/api/routes/employees.php',this.entry,[{headers:myHeaders}])
+            this.$http.post('http://localhost/api/routes/employees/get-post.php', this.entry, {
                     emulateJSON: true
                 })
                 .then(response => {
                     if (response.ok) {
+                        let submittedEmployee = response.body;
+
+                        this.submitImage(submittedEmployee);
                         this.entry.firstName = '';
                         this.entry.lastName = '';
                         this.entry.img = '';
+
                     } else {
                         console.error('there was an error')
                     }
 
                 })
-            // $.post('http://www.gocodigo.com/temporarypages/giordano/vue-directory/api/routes/entries.php',this.entry,(response)=>{
+            // $.post('http://www.gocodigo.com/temporarypages/giordano/vue-directory/api/routes/employees.php',this.entry,(response)=>{
             //   console.log(response);
             // });
         },
-        get() {
-            // this.$http.get('http://www.gocodigo.com/temporarypages/giordano/vue-directory/api/routes/entries.php')
-            this.$http.get('http://localhost:151/api/routes/entries.php')
+        seedDB() {
+            // this.$http.get('http://www.gocodigo.com/temporarypages/giordano/vue-directory/api/routes/employees.php')
+            // this.$http.get('http://localhost:151/api/routes/seed.employees.php')//codigo local host
+            this.$http.get('http://localhost/api/routes/employees/seed.employees.php') //home local host
                 .then(response => {
-
-                    this.data = JSON.parse(response.bodyText)
+                    this.data = JSON.parse(response.bodyText);
                     console.log(this.data);
+                })
+        },
+        get() {
+            // this.$http.get('http://www.gocodigo.com/temporarypages/giordano/vue-directory/api/routes/employees.php')//codigo local host
+            this.$http.get('http://localhost/api/routes/employees/get-post.php')
+                .then(response => {
+                    this.data = JSON.parse(response.bodyText);
                 })
         },
 
