@@ -26,8 +26,8 @@
                                     <button type="button" name="button" @click="removeImage">Remove Image</button>
                                 </div>
                                 <div v-show="!image">
-                                    <form action="post" id="image-form" enctype="multipart/form-data">
-                                        <input id="image-input" type="file" @change="onFileChange" name="file">
+                                    <form action="post" id="image-form" v-if="!reset" enctype="multipart/form-data">
+                                        <input id="image-input" style="display:block" :ref="" type="file" @change="onFileChange" name="file">
                                     </form>
                                 </div>
                             </div>
@@ -44,12 +44,13 @@
                 </form>
             </div>
         </div>
+        <!-- <button type="button" name="button" @click="seedDB">Seed DB</button> -->
         <div class="row">
-            <!-- <button type="button" name="button" @click="seedDB">Seed DB</button> -->
-            <div class="col-md-6 col-md-offset-2">
-                <ul>
-                    <li v-for="entry in data">{{entry.firstName}} {{entry.lastName}} <img :src="entry.img" alt="" style="height:150px"></li>
-                </ul>
+
+            <div class="col-md-3" v-for="entry in data">
+                <button type="button" name="button" class="btn btn-default" @click="deleteEmployee(entry)">Delete</button> {{entry.firstName}} {{entry.lastName}}
+
+                <br /><img  :src="`/api/src/assets/images/ryan/${entry.img}`" alt="" style="height:150px;">
             </div>
         </div>
 
@@ -69,6 +70,7 @@ export default {
             },
             data: null,
             image: '',
+            reset:false
         }
     },
     methods: {
@@ -89,22 +91,30 @@ export default {
             };
         },
         removeImage: function(e) {
-            this.image = '';
+            this.image = false;
+            this.resetImageField();
+        },
+        resetImageField(){
+          this.reset = true;
+          setTimeout(()=>{
+            this.reset=false;
+            //Wipes the images input field clean.  Without this, the filename still remains.
+          },.500)
         },
         submitImage(employee) {
             return new Promise((resolve, reject) => {
                 let formData = new FormData($('image-form')[0]);
                 formData.append('file', $('#image-input')[0].files[0]);
-                for(let prop in employee){
-                  console.log(prop,employee[prop]);
-                  formData.append(prop,employee[prop]);
-                }
-                this.$http.post('http://localhost/api/routes/images/upload.php', formData, {
+                formData.append('uniqueId', employee.uniqueId);
+                formData.append('firstName', employee.firstName);
+                formData.append('lastName', employee.lastName);
+                formData.append('id', employee.id);
+                this.$http.post('http://localhost:151/api/routes/images/upload.php', formData, {
                         emulateJSON: true
                     })
                     .then(response => {
                         if (response.ok) {
-                          console.log(response.body);
+
                             resolve()
                         } else {
                             reject(response);
@@ -115,17 +125,17 @@ export default {
         },
         submit(e) {
             e.preventDefault();
-            let myHeaders = new Headers();
-            myHeaders.append('Content-Type', 'application/json');
-            // this.$http.post('http://www.gocodigo.com/temporarypages/giordano/vue-directory/api/routes/employees.php',this.entry,[{headers:myHeaders}])
-            this.$http.post('http://localhost/api/routes/employees/get-post.php', this.entry, {
+            this.$http.post('http://localhost:151/api/routes/employees/get-post.php', this.entry, {
                     emulateJSON: true
                 })
                 .then(response => {
                     if (response.ok) {
-                        let submittedEmployee = response.body;
-
-                        // this.submitImage(submittedEmployee);
+                        let submittedEmployee = response.body; //returns the employee just posted
+                        console.log(submittedEmployee);
+                        this.submitImage(submittedEmployee).then(data => {
+                            this.get();
+                        });
+                        this.resetImageField();
                         this.entry.firstName = '';
                         this.entry.lastName = '';
                         this.entry.img = '';
@@ -135,23 +145,40 @@ export default {
                     }
 
                 })
-            // $.post('http://www.gocodigo.com/temporarypages/giordano/vue-directory/api/routes/employees.php',this.entry,(response)=>{
-            //   console.log(response);
-            // });
+        },
+        deleteEmployee(employee) {
+            let formData = new FormData();
+            formData.append('img', employee.img);
+            formData.append('id', employee.id);
+            this.$http.post('http://localhost:151/api/routes/employees/delete.php', formData, {
+                    emulateJSON: true
+                })
+                .then(response => {
+                    if (response.ok) {
+                      console.log(response.bodyText);
+                        this.get();
+                        console.log("Employee removed successfully");
+                    } else {
+                        console.error('there was an error')
+                    }
+                })
         },
         seedDB() {
             // this.$http.get('http://www.gocodigo.com/temporarypages/giordano/vue-directory/api/routes/employees.php')
-            // this.$http.get('http://localhost:151/api/routes/seed.employees.php')//codigo local host
-            this.$http.get('http://localhost/api/routes/employees/seed.employees.php') //home local host
+            this.$http.get('http://localhost:151/api/routes/employees/seed-employees.php') //codigo local host
+                // this.$http.get('http://localhost/api/routes/employees/seed.employees.php') //home local host
                 .then(response => {
+                    console.log(response.bodyText);
+                    this.get();
                     this.data = JSON.parse(response.bodyText);
-                    console.log(this.data);
                 })
         },
         get() {
-            // this.$http.get('http://www.gocodigo.com/temporarypages/giordano/vue-directory/api/routes/employees.php')//codigo local host
-            this.$http.get('http://localhost/api/routes/employees/get-post.php')
+            // this.$http.get('http://www.gocodigo.com/temporarypages/giordano/vue-directory/api/routes/employees.php')
+            this.$http.get('http://localhost:151/api/routes/employees/get-post.php')
+                // this.$http.get('http://localhost/api/routes/employees/get-post.php')
                 .then(response => {
+                    console.log(response.body);
                     this.data = JSON.parse(response.bodyText);
                 })
         },
@@ -165,5 +192,7 @@ export default {
 </script>
 
 <style>
-
+input[type="file"] {
+    display: block;
+}
 </style>

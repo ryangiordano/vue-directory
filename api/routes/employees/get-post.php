@@ -6,17 +6,20 @@ require_once '../../controllers/employee-controller.php';
 //the code here is what you put in routes
 
 //create new entry, send image file along with it.
+//Unique id is created on the php side to link u pusers with their pictures.
 if($_SERVER['REQUEST_METHOD']=== 'POST'){
   $firstName = $_POST['firstName'];
   $lastName = $_POST['lastName'];
-  $img = 'placeholder';
+  $uniqueId= uniqid('',true);
+
   $request = array(
        "firstName"=>$firstName,
        "lastName"=>$lastName,
-       "img"=>$img
+       "uniqueId"=>$uniqueId,
+       "img"=>$uniqueId
      );
   $employee = new EmployeeController($DB);
-  $result = $employee->postEmployee($request);
+  $result = $employee->postEmployee($request);//returns the newly inserted employee in object form
   echo $result;
 }
 

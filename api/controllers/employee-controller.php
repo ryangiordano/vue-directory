@@ -37,19 +37,14 @@ class EmployeeController
       return $response;
     }
     public function editEmployee($request){
-      $id = $request->id;
-      $employee = new Employee($this->DB, array(
-        "firstName"=>$request->firstName,
-        "lastName"=>$request->lastName,
-        "img"=>$request->img
-      ));
-      $response = $employee->edit($id);
+      $employee = new Employee($this->DB, $request);
+      $response = $employee->edit();
       return $response;
     }
-    public function deleteEmployee($id)
+    public function deleteEmployee($request)
     {
-      $employee= new Employee($this->DB);
-      $response= $employee->delete($id);
+      $employee= new Employee($this->DB,$request);
+      $response= $employee->delete();
       return $response;
     }
 }
