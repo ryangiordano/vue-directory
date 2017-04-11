@@ -51,6 +51,10 @@ class Employee
     $editEntry->bindValue(':img', $this->data['img'], PDO::PARAM_STR);
     $editEntry->bindValue(':uniqueId', $this->data['uniqueId'], PDO::PARAM_STR);
     $editEntry->execute();
+    $query= $this->DB->prepare("SELECT * FROM test.employees WHERE id=:id");
+    $query->bindValue(':id', $this->data['id'], PDO::PARAM_INT);
+    $query->execute();
+    return json_encode($query->fetchObject());
   }
   public function delete(){
     $deleteEntry = $this->DB->prepare('DELETE FROM test.employees WHERE id=:id');
