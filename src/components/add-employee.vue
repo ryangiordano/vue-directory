@@ -47,6 +47,7 @@
 </template>
 
 <script>
+import {eventBus} from '../main.js';
 export default {
     data() {
         return {
@@ -143,7 +144,7 @@ export default {
                 formData.append('firstName', employee.firstName);
                 formData.append('lastName', employee.lastName);
                 formData.append('id', employee.id);
-                this.$http.post('http://localhost:151/api/routes/images/upload.php', formData, {
+                this.$http.post('http://localhost/api/routes/images/upload.php', formData, {
                         emulateJSON: true
                     })
                     .then(response => {
@@ -151,7 +152,7 @@ export default {
                           console.log(JSON.parse(response.bodyText));
                             resolve()
                         } else {
-                            reject(response);
+                            reject(response.statusText);
                         }
                     });
             })
@@ -159,7 +160,7 @@ export default {
         },
         submit(e) {
             e.preventDefault();
-            this.$http.post('http://localhost:151/api/routes/employees/get-post.php', this.entry, {
+            this.$http.post('http://localhost/api/routes/employees/get-post.php', this.entry, {
                     emulateJSON: true
                 })
                 .then(response => {

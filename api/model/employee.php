@@ -24,7 +24,7 @@ class Employee
 
   }
   public function get(){
-    $return_array = array();
+    $returnArray = array();
     $query= $this->DB->query("SELECT * FROM test.employees");
     while($row = $query->fetch(PDO::FETCH_ASSOC)) {
       $row_array['id'] = $row['id'];
@@ -32,10 +32,19 @@ class Employee
       $row_array['lastName'] = $row['lastName'];
       $row_array['img'] = $row['img'];
       $row_array['uniqueId'] = $row['uniqueId'];
-      array_push($return_array,$row_array);
+      array_push($returnArray,$row_array);
       }
-    echo json_encode($return_array);
-    return json_encode($return_array);
+      if(count($returnArray)<=0){
+        header('HTTP/1.1 204 No results found');
+        header('Content-Type: application/json; charset=UTF-8');
+
+        print json_encode(array('error'=>'No results found.'));
+      }else{
+        header('Content-Type: application/json');
+        print json_encode($returnArray);
+        // return json_encode($returnArray);
+      }
+
   }
   public function getOne($id){
     $query= $this->DB->prepare("SELECT * FROM test.employees WHERE id=:id");

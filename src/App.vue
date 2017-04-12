@@ -9,7 +9,7 @@
         <!-- <button type="button" name="button" @click="seedDB">Seed DB</button> -->
         <div class="row">
 
-            <div class="col-md-3" v-for="entry in data">
+            <div class="col-md-3" v-for="entry in employees">
                 <button type="button" name="button" class="btn btn-default" @click="deleteEmployee(entry)">Delete</button> {{entry.firstName}} {{entry.lastName}}
 
                 <br /><img :src="`/api/src/assets/images/ryan/${entry.img}`" alt="" style="height:150px;">
@@ -21,13 +21,14 @@
 </template>
 
 <script>
+import {eventBus} from './main.js';
 import AddEmployee from './components/add-employee.vue';
 export default {
     name: 'app',
     components:{addEmployee:AddEmployee},
     data() {
       return{
-                data: null,
+                employees: null,
       }
     },
     methods: {
@@ -35,13 +36,15 @@ export default {
             let formData = new FormData();
             formData.append('img', employee.img);
             formData.append('id', employee.id);
-            this.$http.post('http://localhost:151/api/routes/employees/delete.php', formData, {
+            this.$http.post('http://localhost/api/routes/employees/delete.php', formData, {
                     emulateJSON: true
                 })
                 .then(response => {
                     if (response.ok) {
                       console.log(response.bodyText);
-                        this.get();
+                      this.employees.find(entry=>{
+                        return entry.id ===employee.id;
+                      }).pop();
                         console.log("Employee removed successfully");
                     } else {
                         console.error('there was an error')
@@ -50,21 +53,28 @@ export default {
         },
         seedDB() {
             // this.$http.get('http://www.gocodigo.com/temporarypages/giordano/vue-directory/api/routes/employees.php')
-            this.$http.get('http://localhost:151/api/routes/employees/seed-employees.php') //codigo local host
+            this.$http.get('http://localhost/api/routes/employees/seed-employees.php') //codigo local host
                 // this.$http.get('http://localhost/api/routes/employees/seed.employees.php') //home local host
                 .then(response => {
                     console.log(response.bodyText);
                     this.get();
-                    this.data = JSON.parse(response.bodyText);
+                    this.employees = JSON.parse(response.bodyText);
                 })
         },
         get() {
             // this.$http.get('http://www.gocodigo.com/temporarypages/giordano/vue-directory/api/routes/employees.php')
-            this.$http.get('http://localhost:151/api/routes/employees/get-post.php')
+            this.$http.get('http://localhost/api/routes/employees/get-post.php')
                 // this.$http.get('http://localhost/api/routes/employees/get-post.php')
                 .then(response => {
+                  console.log(response);
+                  if(response.ok){
                     console.log(response.body);
-                    this.data = JSON.parse(response.bodyText);
+                    this.employees = JSON.parse(response.bodyText);
+                  }else{
+                    console.error(response.statusText);
+
+                  }
+
                 })
         },
 
@@ -72,6 +82,11 @@ export default {
     mounted() {
         this.get();
 
+    },
+    created(){
+      eventBus.$on('employeeAdded',(employee)=>{
+        this.employee.push(employee)
+      });
     }
 
 }
