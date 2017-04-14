@@ -35,7 +35,9 @@
           <button type="submit" class="btn btn-default">Submit</button>
         </form> -->
         <ul class="nav navbar-nav navbar-right">
-          <li><router-link to="login">Login</router-link></li>
+          <li><router-link to="login" v-if="!loggedIn">Login</router-link></li>
+          <li v-if="loggedIn"><a href="#" @click="logOut">Log Out</a></li>
+
         </ul>
       </div>
     </div>
@@ -43,7 +45,28 @@
 </template>
 
 <script>
+import {eventBus} from '../../main';
 export default {
+  props:['loggedIn'],
+  data:function(){
+    return{
+      // loggedIn:false,
+    }
+  },
+  computed:{
+  },
+  methods:{
+    logOut(e){
+      e.preventDefault();
+      this.$store.dispatch('login',false);
+      localStorage.clear();
+      eventBus.$emit('loggedOut',true);
+      eventBus.$emit('alert',"Successfully Logged Out");
+      this.$router.push({
+          path: '/login'
+      })
+    }
+  }
 }
 </script>
 
@@ -57,5 +80,6 @@ margin-bottom:0;
 }
 .logo{
   height:40px;
+  margin:10px 0;
 }
 </style>

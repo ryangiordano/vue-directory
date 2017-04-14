@@ -7,7 +7,7 @@
       </div>
       <!-- <button type="button" name="button" @click="seedDB">Seed DB</button> -->
       <div class="row">
-          <employees :employees="employees" ></employees>
+        <transition-group @enter="fadeInUp" @leave="fadeOut" appear>  <employee v-for="(employee,index) in employees" :employee="employee" :index="index" :key="index"></employee></transition-group>
 
       </div>
 
@@ -19,13 +19,13 @@ import {
     eventBus
 } from '../main.js';
 import AddEmployee from './employee/add-employee.vue';
-import Employees from './employee/employees.vue';
+import Employee from './employee/employees.vue';
 import NavBar from './nav/navbar.vue';
 export default {
   name: 'app',
   components: {
       addEmployee: AddEmployee,
-      employees: Employees,
+      employee: Employee,
       appNavBar: NavBar
   },
   data() {
@@ -36,7 +36,23 @@ export default {
       }
   },
   methods: {
-
+    fadeOut(el,done){
+      let tl = new TimelineMax;
+      tl.to(el,.2,{
+        opacity:0,
+        delay:.3,
+        onComplete:done
+      })
+    },
+    fadeInUp(el,done){
+      let tl = new TimelineMax;
+      tl.from(el,.2,{
+        y:20,
+        opacity:0,
+        delay:.3,
+        onComplete:done
+      })
+    },
       deleteEmployee(employee) {
           let formData = new FormData();
           formData.append('img', employee.img);

@@ -1,10 +1,10 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-
+import Auth from './modules/auth';
 
 Vue.use(Vuex);
 
-export const store = new Vuex.store({
+export const store = new Vuex.Store({
   state:{
     value:'f'
   },
@@ -20,11 +20,10 @@ export const store = new Vuex.store({
   },
   actions:{
     updateValue:({commit},payload)=>{
-      console.log(payload);
       commit('updateValue',payload);
     }
   },
   modules:{
-    
+    Auth
   }
 })

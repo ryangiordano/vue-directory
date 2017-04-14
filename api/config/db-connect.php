@@ -5,7 +5,7 @@ header('Access-Control-Allow-Origin: *');
  header('Access-Control-Max-Age: 1000');
  header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token , Authorization');
  header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
-// $host = 'localhost:3333';//this is the host for codigo
+// $host = 'localhost:3333';//this is the host for work
 $host='localhost:3306';//this is the host for my home
 $user='root';
 $password='root';

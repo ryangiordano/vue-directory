@@ -1,4 +1,6 @@
 <?php
+require_once '../../library/jwt.php';
+require_once '../../config/config.php';
 class User
 {
   function __construct($DB,$data = null)
@@ -64,11 +66,36 @@ class User
     $query->bindValue(':password', $password, PDO::PARAM_INT);
     $query->execute();
     if($query->fetchObject()){
+      $user = $query->fetchObject();
       header('HTTP/1.1 200 Login Successful');
       header('Content-Type: application/json; charset=UTF-8');
-      print json_encode($query->fetchObject());
+      //generate a web token and send it to the client
+      $tokenId=base64_encode(mcrypt_create_iv(32));
+      $issuedAt= time();
+      $notBefore=$issuedAt+10;
+      $expire = $notBefore+86400;//one day
+
+      // create the token as an array
+      $data=[
+        'iat'=>$issuedAt,
+        'jti'=>$tokenId,//the token id: a unique identifier for the token
+        'iss'=>'Server',
+        'nbf'=>$notBefore,
+        'exp'=>$expire,
+        'data'=>[
+          'userId'=> 'the user id'
+        ]
+      ];
+      $secretKey = base64_decode(jwtKey);
+      $jwt=JWT::encode(
+        $data,
+        $secretKey,
+        "HS512"
+      );
+      $unencodedArray = ['jwt'=>$jwt];
+      print json_encode($unencodedArray);
     }else{
-      header('HTTP/1.1 500 No user found');
+      header('HTTP/1.1 204 No user found');
       header('Content-Type: application/json');
       print json_encode(array("error"=>"No user found"));
     }

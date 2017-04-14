@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="overlay" ><form class="form-horizontal">
+  <div class="overlay" ><form class="form-horizontal" v-if="loggedIn">
       <fieldset>
           <div class="form-group">
               <label for="inputEmail" class="col-lg-2 control-label">First Name</label>
@@ -51,6 +51,11 @@ import {
     eventBus
 } from '../../main.js';
 export default {
+  computed:{
+    loggedIn(){
+      return this.$store.getters.loggedIn;
+    }
+  },
     data() {
         return {
             crop_max_width: 300,
@@ -214,5 +219,8 @@ export default {
 #target{
   /*min-height:300px;
   max-height:300px;*/
+}
+.form-horizontal{
+  min-height:230px;
 }
 </style>

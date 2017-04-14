@@ -1,4 +1,4 @@
-export const AnimationMixin ={
+export const AnimationMixin = {
   data () {
     return {
       duration:.5
