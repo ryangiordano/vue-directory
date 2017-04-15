@@ -1,15 +1,16 @@
 <template lang="html">
-  <div class="overlay" ><form class="form-horizontal" v-if="loggedIn">
+  <div class="overlay" @click="closeModal">
+<div class="panel" @click.stop>    <div class="panel-body"><form class="form-horizontal" v-if="loggedIn">
       <fieldset>
           <div class="form-group">
               <label for="inputEmail" class="col-lg-2 control-label">First Name</label>
-              <div class="col-lg-10">
+              <div class="col-lg-7">
                   <input type="text" class="form-control" v-model="entry.firstName" id="firstName" placeholder="First Name">
               </div>
           </div>
           <div class="form-group">
               <label for="inputEmail" class="col-lg-2 control-label">Last Name</label>
-              <div class="col-lg-10">
+              <div class="col-lg-7">
                   <input type="text" class="form-control" v-model="entry.lastName" id="lastName" placeholder="lastName">
               </div>
           </div>
@@ -38,12 +39,13 @@
 
           <div class="form-group">
               <div class="col-lg-10 col-lg-offset-2">
-                  <button class="btn btn-default" @click="">Cancel</button>
+                  <button class="btn btn-default" @click="closeModal">Cancel</button>
                   <button class="btn btn-primary" @click="submit">Submit</button>
               </div>
           </div>
       </fieldset>
-  </form></div>
+  </form></div></div>
+</div>
 </template>
 
 <script>
@@ -51,11 +53,11 @@ import {
     eventBus
 } from '../../main.js';
 export default {
-  computed:{
-    loggedIn(){
-      return this.$store.getters.loggedIn;
-    }
-  },
+    computed: {
+        loggedIn() {
+            return this.$store.getters.loggedIn;
+        }
+    },
     data() {
         return {
             crop_max_width: 300,
@@ -79,6 +81,10 @@ export default {
         }
     },
     methods: {
+      closeModal(e){
+        e.preventDefault();
+        this.$emit('close',true);
+      },
         onFileChange(e) {
             //takes the base 64 string of the file
             var files = e.target.files || e.dataTransfer.files;
@@ -125,7 +131,7 @@ export default {
                 this.crop.h = c.h
         },
         drawCanvas(c) {
-          //canvas is never seen
+            //canvas is never seen
             this.imageObj = $("#target")[0];
             var canvas = $("#canvas")[0];
             canvas.width = this.crop.w;
@@ -141,7 +147,7 @@ export default {
             this.reset = true;
             setTimeout(() => {
                 this.reset = false;
-                            this.image = '';
+                this.image = '';
                 // console.log(this.reset);
                 //Wipes the images input field clean.  Without this, the filename still remains.
             }, 500)
@@ -172,9 +178,9 @@ export default {
                         if (response.ok) {
                             let newEmployee = JSON.parse(response.bodyText);
                             eventBus.$emit('employeeAdded', newEmployee);
-                            setTimeout(()=>{
-                              eventBus.$emit('uploading',false);
-                            },2000)
+                            setTimeout(() => {
+                                eventBus.$emit('uploading', false);
+                            }, 2000)
                             resolve()
                         } else {
                             reject(response.statusText);
@@ -185,7 +191,7 @@ export default {
         },
         submit(e) {
             e.preventDefault();
-            eventBus.$emit('uploading',true);
+            eventBus.$emit('uploading', true);
             this.$http.post('http://localhost/api/routes/employees/get-post.php', this.entry, {
                     emulateJSON: true
                 })
@@ -193,6 +199,7 @@ export default {
                     if (response.ok) {
                         let submittedEmployee = response.body; //returns the employee just posted
                         console.log(submittedEmployee);
+                        //draw the canvas to crop the image on the client-side.
                         this.drawCanvas();
                         setTimeout(() => {
                             this.submitImage(submittedEmployee).then(data => {
@@ -206,7 +213,7 @@ export default {
 
 
                     } else {
-                        console.error('there was an error')
+                        console.error('there was an error');
                     }
 
                 })
@@ -215,12 +222,32 @@ export default {
 }
 </script>
 
-<style lang="css">
-#target{
-  /*min-height:300px;
+<style scoped>
+#target {
+    /*min-height:300px;
   max-height:300px;*/
 }
-.form-horizontal{
-  min-height:230px;
+.panel{
+  width:50%;
+  min-height:200px;
+  border-radius:7px;
+  -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+.overlay{
+  background-color:rgba(0,0,0,.5);
+  display:flex;
+  position:absolute;
+  z-index:2000;
+  height:100%;
+  width:100%;
+  top:0;
+  left:0;
+  justify-content:center;
+  align-items:center;
+}
+
+.form-horizontal {
+    min-height: 230px;
 }
 </style>

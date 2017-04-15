@@ -36,7 +36,15 @@
         </form> -->
         <ul class="nav navbar-nav navbar-right">
           <li><router-link to="login" v-if="!loggedIn">Login</router-link></li>
-          <li v-if="loggedIn"><a href="#" @click="logOut">Log Out</a></li>
+
+          <li @click="openDropdown" class="dropdown" v-if="loggedIn">
+            <a href="#"class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{name}}
+            </a>
+            <transition >
+              <user-drop-down v-if="dropdown" :loggedIn="loggedIn" @closeMe="!dropdown">
+              </user-drop-down>
+            </transition>
+          </li>
 
         </ul>
       </div>
@@ -45,41 +53,62 @@
 </template>
 
 <script>
-import {eventBus} from '../../main';
+
+import {
+    eventBus
+} from '../../main';
+import userDropDown from './user-dropdown.vue';
 export default {
-  props:['loggedIn'],
-  data:function(){
-    return{
-      // loggedIn:false,
+    props: ['loggedIn'],
+    data: function() {
+        return {
+            dropdown: false,
+        }
+    },
+    components: {
+        userDropDown: userDropDown
+    },
+    mixins: [],
+    computed: {},
+    methods: {
+        logOutClicked(e) {
+            e.preventDefault();
+            this.logout();
+        },
+        openDropdown(e) {
+            e.preventDefault();
+            this.dropdown = !this.dropdown;
+        },
+
+    },
+    computed: {
+        name() {
+            if (this.$store.getters.user) {
+                return `${this.$store.getters.user.firstName} ${this.$store.getters.user.lastName}`;
+            }
+            return '';
+
+        }
     }
-  },
-  computed:{
-  },
-  methods:{
-    logOut(e){
-      e.preventDefault();
-      this.$store.dispatch('login',false);
-      localStorage.clear();
-      eventBus.$emit('loggedOut',true);
-      eventBus.$emit('alert',"Successfully Logged Out");
-      this.$router.push({
-          path: '/login'
-      })
-    }
-  }
 }
 </script>
 
 <style scoped>
-.navbar{
-padding-bottom:0;
-margin-bottom:0;
+.navbar {
+    padding-bottom: 0;
+    margin-bottom: 0;
 }
-.navbar-brand{
-  padding: 10px 15px;
+
+.dropdown-wrapper {
+    position: relative;
 }
-.logo{
-  height:40px;
-  margin:10px 0;
+
+.navbar-brand {
+    padding: 10px 15px;
+}
+
+.logo {
+    height: 40px;
+    margin: 10px 0;
 }
 </style>

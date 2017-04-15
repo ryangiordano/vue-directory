@@ -65,8 +65,8 @@ class User
     $query->bindValue(':email', $email, PDO::PARAM_INT);
     $query->bindValue(':password', $password, PDO::PARAM_INT);
     $query->execute();
-    if($query->fetchObject()){
-      $user = $query->fetchObject();
+    $user = $query->fetchObject();
+    if($user){
       header('HTTP/1.1 200 Login Successful');
       header('Content-Type: application/json; charset=UTF-8');
       //generate a web token and send it to the client
@@ -74,7 +74,7 @@ class User
       $issuedAt= time();
       $notBefore=$issuedAt+10;
       $expire = $notBefore+86400;//one day
-
+      $returnUser = array('firstName'=>$user->firstName,'lastName'=>$user->lastName,'id'=>$user->id);
       // create the token as an array
       $data=[
         'iat'=>$issuedAt,
@@ -83,17 +83,17 @@ class User
         'nbf'=>$notBefore,
         'exp'=>$expire,
         'data'=>[
-          'userId'=> 'the user id'
+          'user'=> $user
         ]
       ];
-      $secretKey = base64_decode(jwtKey);
+      $secretKey = jwtKey;
       $jwt=JWT::encode(
         $data,
         $secretKey,
         "HS512"
       );
-      $unencodedArray = ['jwt'=>$jwt];
-      print json_encode($unencodedArray);
+      $returnArray = ['jwt'=>$jwt];
+      print json_encode($returnArray);
     }else{
       header('HTTP/1.1 204 No user found');
       header('Content-Type: application/json');

@@ -5,11 +5,17 @@ const state = {
 const getters = {
     loggedIn: state => {
         return state.loggedIn
+    },
+    user:state=>{
+      return state.user
     }
 }
 const mutations = {
     login: (state, payload) => {
         state.loggedIn = payload;
+    },
+    user:(state,payload)=>{
+      state.user = payload;
     }
 }
 const actions = {
@@ -17,6 +23,11 @@ const actions = {
         commit
     }, payload) => {
         commit('login', payload);
+    },
+    setUser: ({
+        commit
+    }, payload) => {
+        commit('user', payload);
     }
 }
 

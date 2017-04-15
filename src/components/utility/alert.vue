@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="alert alert-dismissible alert-success">
+  <div class="alert alert-dismissible alert-success" :style="{backgroundColor:color}">
     <button type="button" class="close" @click="closeAlert">&times;</button>
     <p>{{message}}</p>
   </div>
@@ -8,17 +8,17 @@
 <script>
 import {eventBus} from '../../main';
 export default {
-  props:['message','showAlert'],
+  props:['message','showAlert','color','id'],
   methods:{
     closeAlert(){
-      eventBus.$emit('alertClosed',false);
+      eventBus.$emit('removeAlert',this.id);
       clearTimeout(this.timeout);
     }
   },
   created(){
     this.timeout =  setTimeout(()=>{
-      eventBus.$emit('alertClosed',false);
-    },5000)
+      eventBus.$emit('removeAlert',this.id);
+    },3000)
   }
 
 }
@@ -26,10 +26,7 @@ export default {
 
 <style scoped>
 .alert{
-  position:absolute;
-  top:100px;
-  right:100px;
-  width:20%;
+
 }
 .alert p{
   font-size:20px;

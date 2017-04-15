@@ -62,6 +62,14 @@ export const AnimationMixin = {
         onComplete:done
       })
     },
+    fadeInDown(el,done){
+      let tl = new TimelineMax;
+      tl.from(el,this.duration,{
+        y:-20,
+        opacity:0,
+        onComplete:done
+      })
+    },
     fadeInScale(el,done){
       let tl = new TimelineMax;
       tl.from(el,this.duration,{
