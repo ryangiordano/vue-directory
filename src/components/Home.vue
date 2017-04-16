@@ -66,18 +66,17 @@ export default {
         delete(employee) {
             this.deleteEmployee(employee);
         },
-        seedDB() {
-            // this.$http.get('http://www.gocodigo.com/temporarypages/giordano/vue-directory/api/routes/employees.php')
-            this.$http.get('http://localhost/api/routes/employees/seed-employees.php') //codigo local host
-                // this.$http.get('http://localhost/api/routes/employees/seed.employees.php') //home local host
-                .then(response => {
-                    this.get();
-                    this.employees = JSON.parse(response.bodyText);
-                })
-        },
         get() {
             this.getEmployees();
         },
+        handleAdd(employee){
+          console.log(employee);
+          this.employees.push(employee);
+        },
+        handleDelete(payload){
+          this.delete(payload.entry);
+          this.employees.splice(payload.index, 1);
+        }
     },
     mounted() {
         this.get();
@@ -88,19 +87,18 @@ export default {
         }
     },
     created() {
-        eventBus.$on('employeeAdded', (employee) => {
-            console.log(employee);
-            this.employees.push(employee);
-        });
-        eventBus.$on('employeeDeleted', (payload) => {
-            this.delete(payload.entry);
-            this.employees.splice(payload.index, 1);
-
-        });
+        eventBus.$on('employeeAdded',this.handleAdd);
+        eventBus.$on('employeeDeleted', this.handleDelete);
         eventBus.$on('uploading', (status) => {
-            console.log(status);
             this.loading = status;
         })
+    },
+    beforeDestroy(){
+      eventBus.$off('employeeAdded',this.handleAdd);
+      eventBus.$off('employeeDeleted', this.handleDelete);
+      eventBus.$off('uploading', (status) => {
+          this.loading = status;
+      })
     }
 
 }

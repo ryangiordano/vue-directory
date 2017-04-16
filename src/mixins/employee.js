@@ -18,7 +18,6 @@ export const EmployeeHttp = {
                         }
 
                         this.employee = JSON.parse(response.bodyText);
-                        console.log(this.employee);
                     } else {
                         console.error(response.statusText);
 
@@ -71,13 +70,18 @@ export const EmployeeHttp = {
             formData.append('firstName', this.employee.firstName);
             formData.append('lastName', this.employee.lastName);
             formData.append('about', this.employee.about);
+            formData.append('img', this.employee.img);
             this.$http.post('http://localhost/api/routes/employees/edit.php', formData, {
                     emulateJSON: true,
                 })
                 .then(response => {
                   console.log(response);
                     if (response.ok) {
-                        console.log("Employee edited successfully");
+                      eventBus.$emit('alert', {
+                          message: 'Employee edited successfully',
+                          color: '#85c151'
+                      });
+
                     } else {
                         console.error('there was an error')
                     }

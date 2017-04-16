@@ -45,11 +45,11 @@
             </a>
 
           </li>
-          <ul class="dropdown-menu-app" v-if="toggleDropdown">
+<click-outside :handler="closeDropdown">          <ul class="dropdown-menu-app" v-if="toggleDropdown" @clickOut="!this.toggleDropdown">
               <li><a href="#"  @click="addEmployee">Add Employee</a></li>
-              <li><a href="#">Edit Company</a></li>
+              <li><router-link to="/company" href="#">Company</router-link ></li>
               <li v-if="loggedIn"><a href="#" @click="logOutClicked">Logout</a></li>
-            </ul>
+            </ul></click-outside>
         </ul>
 
 
@@ -61,6 +61,7 @@
 </template>
 
 <script>
+import ClickOutside from '../../directives/onclick-outside';
 import {
     eventBus
 } from '../../main';
@@ -75,7 +76,9 @@ export default {
         }
     },
     mixins: [UserHttp],
-    computed: {},
+    components:{
+      ClickOutside
+    },
     methods: {
         logOutClicked(e) {
             e.preventDefault();
@@ -104,7 +107,7 @@ export default {
                 return eventBus.$emit('addEmployeeModal', true);
             }
             eventBus.$emit('addEmployeeModal', true);
-        }
+        },
 
     },
     computed: {
@@ -118,7 +121,14 @@ export default {
     },
     created() {
         this.toggleDropdown = false;
+    },
+    mounted(){
+      document.addEventListener('click',this.handleClickOutside,true);
+    },
+    beforeDestroy(){
+      document.removeEventListener('click',this.handleClickOutside,true);
     }
+
 }
 </script>
 

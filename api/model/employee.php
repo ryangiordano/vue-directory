@@ -58,7 +58,7 @@ class Employee
     return json_encode($query->fetchObject());
   }
   public function edit(){
-    $editEntry = $this->DB->prepare("UPDATE test.employees SET firstName = :firstName, lastName = :lastName, email = :email, branchId = :branchId, phone = :phone, about = :about, title = :title WHERE id =". $this->data['id']);
+    $editEntry = $this->DB->prepare("UPDATE test.employees SET firstName = :firstName, lastName = :lastName, email = :email, branchId = :branchId, phone = :phone, about = :about, title = :title, img = :img WHERE id =". $this->data['id']);
     $editEntry->bindValue(':firstName', $this->data['firstName'], PDO::PARAM_STR);
     $editEntry->bindValue(':lastName', $this->data['lastName'], PDO::PARAM_STR);
     $editEntry->bindValue(':email', $this->data['email'], PDO::PARAM_STR);
@@ -66,6 +66,7 @@ class Employee
     $editEntry->bindValue(':phone', $this->data['phone'], PDO::PARAM_STR);
     $editEntry->bindValue(':about', $this->data['about'], PDO::PARAM_STR);
     $editEntry->bindValue(':title', $this->data['title'], PDO::PARAM_STR);
+    $editEntry->bindValue(':img', $this->data['img'], PDO::PARAM_STR);
     $editEntry->execute();
     $query= $this->DB->prepare("SELECT * FROM test.employees WHERE id=:id");
     $query->bindValue(':id', $this->data['id'], PDO::PARAM_INT);

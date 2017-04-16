@@ -16,6 +16,13 @@ const Home = resolve => {
     })
 }
 
+const CompanyDetails = resolve => {
+    require.ensure(['./components/company/company-detail.vue'], () => {
+        resolve(require('./components/company/company-detail.vue'))
+    })
+}
+
+
 export const routes = [{
         path: '/',
         name:'home',
@@ -31,6 +38,11 @@ export const routes = [{
         path: '/detail/:id',
         name: 'detail',
         component: EmployeeDetail
+    },
+    {
+        path: '/company',
+        name: 'company',
+        component: CompanyDetails
     },
     {
         path: '*',

@@ -13,11 +13,12 @@ if($_SERVER['REQUEST_METHOD']=== 'POST'){
     if($token){
       $firstName = $_POST['firstName'];
       $lastName = $_POST['lastName'];
-      $about = $_POST['about'];
+      $about =$_POST['about'];
       $branch = $_POST['branchId'];
-      $phone = $_POST['phone'];
-      $email = $_POST['email'];
-      $title = $_POST['title'];
+      $phone =$_POST['phone'];
+      $email =$_POST['email'];
+      $title =$_POST['title'];
+      $img =$_POST['img'];
       $id = $_POST['id'];
       $request = array(
            "firstName"=>$firstName,
@@ -26,6 +27,7 @@ if($_SERVER['REQUEST_METHOD']=== 'POST'){
            "branchId"=>$branch,
            "phone"=>$phone,
            "email"=>$email,
+           "img"=>$img,
                   "title"=>$title,
            "id"=>$id
          );

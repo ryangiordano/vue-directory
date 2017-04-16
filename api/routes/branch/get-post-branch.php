@@ -10,27 +10,24 @@ require_once '../../library/jwt.php';
 //create new entry, send image file along with it.
 //Unique id is created on the php side to link u pusers with their pictures.
 if($_SERVER['REQUEST_METHOD']=== 'POST'){
-  $firstName = $_POST['firstName'];
-  $lastName = $_POST['lastName'];
-  $uniqueId= uniqid('',true);
+  $name = $_POST['name'];
+  $location = $_POST['location'];
   $request = array(
-       "firstName"=>$firstName,
-       "lastName"=>$lastName,
-       "uniqueId"=>$uniqueId,
-       "img"=>$uniqueId
+       "name"=>$name,
+       "location"=>$location,
      );
-  $employee = new EmployeeController($DB);
-  $result = $employee->postEmployee($request);//returns the newly inserted employee in object form
+  $branch = new BranchController($DB);
+  $result = $branch->postBranch($request);//returns the newly inserted employee in object form
   echo $result;
 }
 
 if($_SERVER['REQUEST_METHOD']=== 'GET'){
   if(isset($_GET['id'])){
-    $employee = new EmployeeController($DB);
-    $employee->getEmployee($_GET['id']);
+    $branch = new BranchController($DB);
+    $branch->getEmployee($_GET['id']);
   }else{
-    $employee = new EmployeeController($DB);
-    $employee->getAll();
+    $branch = new BranchController($DB);
+    $branch->getAll();
   }
 
 }

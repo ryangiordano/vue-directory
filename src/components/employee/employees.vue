@@ -1,7 +1,7 @@
 <template lang="html">
 <div>  <div class="col-md-3">
   <div class="panel employee" @mouseenter="viewOptions=true" @click="toDetail" @mouseleave="viewOptions=false">
-  <div class="panel-heading" style="height:40px" >
+  <div class="panel-heading" style="height:40px" @click.stop>
         <transition @enter="fadeIn" @leave="fadeOut">  <span v-show="viewOptions"><span  @click="editEmployee(employee)" v-if="loggedIn" class="edit icon"><img src="/src/assets/images/edit.png" /></span>
         <span  @click="deleteEmployee(employee,index)" v-if="loggedIn" class="delete icon"><img src="/src/assets/images/x.png" /></span></span></transition>
     </div>

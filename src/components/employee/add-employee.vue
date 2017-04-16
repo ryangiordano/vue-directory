@@ -5,13 +5,13 @@
           <div class="form-group">
               <label for="inputEmail" class="col-lg-2 control-label">First Name</label>
               <div class="col-lg-7">
-                  <input type="text" class="form-control" v-model="entry.firstName" id="firstName" placeholder="First Name">
+                  <input type="text" class="form-control" v-model="employee.firstName" id="firstName" placeholder="First Name">
               </div>
           </div>
           <div class="form-group">
               <label for="inputEmail" class="col-lg-2 control-label">Last Name</label>
               <div class="col-lg-7">
-                  <input type="text" class="form-control" v-model="entry.lastName" id="lastName" placeholder="lastName">
+                  <input type="text" class="form-control" v-model="employee.lastName" id="lastName" placeholder="lastName">
               </div>
           </div>
           <!--This is where the image happens  -->
@@ -67,7 +67,7 @@ export default {
             crop_max_width: 300,
             crop_max_height: 300,
             imageObj: '',
-            entry: {
+            employee: {
                 firstName: '',
                 lastName: '',
                 img: ''
@@ -160,10 +160,16 @@ export default {
             return new Promise((resolve, reject) => {
 
                 let formData = new FormData($('image-form')[0]);
+                formData.append('token', localStorage.getItem('token'));
                 formData.append('file', $("#canvas")[0].toDataURL('image/jpeg'));
                 formData.append('uniqueId', employee.uniqueId);
+                formData.append('about', employee.about);
                 formData.append('firstName', employee.firstName);
                 formData.append('lastName', employee.lastName);
+                formData.append('title', employee.title);
+                formData.append('branchId', employee.branchId);
+                formData.append('phone', employee.phone);
+                formData.append('email', employee.email);
                 formData.append('id', employee.id);
                 this.$http.post('http://localhost/api/routes/images/upload.php', formData, {
                         emulateJSON: true,
@@ -180,6 +186,7 @@ export default {
                     })
                     .then(response => {
                         if (response.ok) {
+                          console.log(response);
                             let newEmployee = JSON.parse(response.bodyText);
                             eventBus.$emit('employeeAdded', newEmployee);
                             setTimeout(() => {
@@ -196,7 +203,7 @@ export default {
         submit(e) {
             e.preventDefault();
             eventBus.$emit('uploading', true);
-            this.$http.post('http://localhost/api/routes/employees/get-post.php', this.entry, {
+            this.$http.post('http://localhost/api/routes/employees/get-post.php', this.employee, {
                     emulateJSON: true
                 })
                 .then(response => {
@@ -210,9 +217,9 @@ export default {
                                 this.resetImageField();
                             });
 
-                            this.entry.firstName = '';
-                            this.entry.lastName = '';
-                            this.entry.img = '';
+                            this.employee.firstName = '';
+                            this.employee.lastName = '';
+                            this.employee.img = '';
                         }, 500)
 
 
