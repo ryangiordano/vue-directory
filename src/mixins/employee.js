@@ -47,11 +47,13 @@ export const EmployeeHttp = {
         deleteEmployee(employee) {
             let formData = new FormData();
             formData.append('id', employee.id);
+            formData.append('img',employee.img);
             this.$http.post('http://localhost/api/routes/employees/delete.php', formData, {
                     emulateJSON: true,
                 })
                 .then(response => {
                     if (response.ok) {
+                      console.log(response);
                         console.log("Employee removed successfully");
                     } else {
                         console.error('there was an error')

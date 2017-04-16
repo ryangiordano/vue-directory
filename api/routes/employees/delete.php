@@ -15,13 +15,16 @@ if($_SERVER['REQUEST_METHOD']=== 'POST'){
      );
   $employee = new EmployeeController($DB);
   $result = $employee->deleteEmployee($request);
-
   $dir = '../../src/assets/images/ryan/'.$img;
   if(file_exists($dir)){
     unlink($dir);
   }else{
     echo "file does not exist";
   }
+
+
+
+
 }
 
 
