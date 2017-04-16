@@ -1,5 +1,8 @@
 <template lang="html">
-  <nav class="navbar navbar-default navbar-fixed-top">
+<span>  <div class="click-layer" @click="closeDropdown">
+
+  </div>
+  <nav class="navbar navbar-default navbar-fixed-top" >
     <div class="container">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -35,40 +38,43 @@
           <button type="submit" class="btn btn-default">Submit</button>
         </form> -->
         <ul class="nav navbar-nav navbar-right">
-          <li><router-link to="login" v-if="!loggedIn">Login</router-link></li>
+          <li><router-link to="/login" v-if="!loggedIn">Login</router-link></li>
 
           <li @click="openDropdown" class="dropdown" v-if="loggedIn">
             <a href="#"class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{name}}
             </a>
-            <transition >
-              <user-drop-down v-if="dropdown" :loggedIn="loggedIn" @closeMe="!dropdown">
-              </user-drop-down>
-            </transition>
-          </li>
 
+          </li>
+          <ul class="dropdown-menu-app" v-if="toggleDropdown">
+              <li><a href="#"  @click="addEmployee">Add Employee</a></li>
+              <li><a href="#">Edit Company</a></li>
+              <li v-if="loggedIn"><a href="#" @click="logOutClicked">Logout</a></li>
+            </ul>
         </ul>
+
+
       </div>
     </div>
-  </nav>
+
+
+  </nav></span>
 </template>
 
 <script>
-
 import {
     eventBus
 } from '../../main';
-import userDropDown from './user-dropdown.vue';
+import {
+    UserHttp
+} from '../../mixins/user';
 export default {
     props: ['loggedIn'],
     data: function() {
         return {
-            dropdown: false,
+            toggleDropdown: false,
         }
     },
-    components: {
-        userDropDown: userDropDown
-    },
-    mixins: [],
+    mixins: [UserHttp],
     computed: {},
     methods: {
         logOutClicked(e) {
@@ -77,8 +83,28 @@ export default {
         },
         openDropdown(e) {
             e.preventDefault();
-            this.dropdown = !this.dropdown;
+            this.toggleDropdown = !this.toggleDropdown;
         },
+        closeDropdown(){
+          if(this.toggleDropdown){
+            this.toggleDropdown = false;
+          }
+        },
+        logOutClicked(e) {
+            e.preventDefault();
+            this.logout();
+            this.toggleDropdown = false;
+        },
+        addEmployee(e) {
+            e.preventDefault();
+            if (this.$route.path.name !== 'home') {
+                this.$router.push({
+                    path: '/'
+                });
+                return eventBus.$emit('addEmployeeModal', true);
+            }
+            eventBus.$emit('addEmployeeModal', true);
+        }
 
     },
     computed: {
@@ -89,6 +115,9 @@ export default {
             return '';
 
         }
+    },
+    created() {
+        this.toggleDropdown = false;
     }
 }
 </script>
@@ -110,5 +139,36 @@ export default {
 .logo {
     height: 40px;
     margin: 10px 0;
+}
+
+.dropdown-menu-app {
+    padding: 10px;
+    background-color: #ffffff;
+    -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    position: absolute;
+    opacity: 1;
+    top:50px;
+    width: 200px;
+    z-index: 1000;
+}
+
+.dropdown-menu-app li {
+    list-style: none;
+}
+
+.dropdown-menu-app li a {
+    color: #666666;
+}
+
+.dropdown-menu-app li a:hover {
+    text-decoration: none;
+}
+.click-layer{
+  position:absolute;
+  height:100%;
+  width:100%;
+  z-index:0;
+
 }
 </style>

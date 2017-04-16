@@ -1,6 +1,6 @@
 <template lang="html">
 
-    <ul class="dropdown">
+  <ul class="dropdown">
       <li><a href="#" @click="addEmployee">Add Employee</a></li>
       <li><a href="#">Edit Company</a></li>
       <li v-if="loggedIn"><a href="#" @click="logOutClicked">Logout</a></li>
@@ -27,18 +27,26 @@ export default {
         },
         addEmployee(e){
           e.preventDefault();
+          if(this.$route.path.name !=='home'){
+            this.$router.push({path:'/'});
+            return eventBus.$emit('addEmployeeModal',true);
+          }
           eventBus.$emit('addEmployeeModal',true);
+        },
+        close(){
+            this.$emit('closeMe',true);
         }
 
     },
-    created(){
-    },
+
     destroyed(){
+      window.removeEventListener('click',this.close);
     }
 }
 </script>
 
 <style scoped>
+
 .dropdown {
     padding: 10px;
     background-color: #ffffff;

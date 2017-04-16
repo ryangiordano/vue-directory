@@ -1,8 +1,8 @@
 <template lang="html">
 <div>  <div class="col-md-3">
-  <div class="panel employee" @mouseenter="viewOptions=true" @mouseleave="viewOptions=false">
+  <div class="panel employee" @mouseenter="viewOptions=true" @click="toDetail" @mouseleave="viewOptions=false">
   <div class="panel-heading" style="height:40px" >
-        <transition @enter="fadeIn" @leave="fadeOut">  <span v-show="viewOptions"><span  @click="deleteEmployee(employee,index)" v-if="loggedIn" class="edit icon"><img src="/src/assets/images/edit.png" /></span>
+        <transition @enter="fadeIn" @leave="fadeOut">  <span v-show="viewOptions"><span  @click="editEmployee(employee)" v-if="loggedIn" class="edit icon"><img src="/src/assets/images/edit.png" /></span>
         <span  @click="deleteEmployee(employee,index)" v-if="loggedIn" class="delete icon"><img src="/src/assets/images/x.png" /></span></span></transition>
     </div>
   <div class="panel-body">
@@ -12,6 +12,9 @@
       </div>
       <div class="col-xs-8">
            <h5>{{employee.firstName}} {{employee.lastName}}</h5>
+           <p>{{employee.title}}</p>
+           <p>{{employee.phone}}</p>
+           <p>{{employee.email}}</p>
       </div>
     </div>
   </div>
@@ -61,21 +64,34 @@ export default {
                 onComplete: done
             })
         },
-        create() {
-            console.log(employee);
+        toDetail(){
+            this.$router.push(`/detail/${this.employee.id}`)
         },
+
         deleteEmployee(entry, index) {
+          let r = confirm('Are you sure you want to delete '+entry.firstName+'\'s entry?');
+          if(r){
             let payload = {
                 entry,
                 index
             };
             eventBus.$emit('employeeDeleted', payload)
+          }
+        },
+        editEmployee(entry) {
+            this.$router.push({
+                path: `/edit/${entry.id}`
+            })
+
         }
     }
 }
 </script>
 
 <style scoped>
+h5{
+  margin-top:0;
+}
 .icons {}
 
 .icon {
@@ -100,6 +116,7 @@ export default {
 
 .employee {
     min-height: 200px;
+    cursor:pointer;
 }
 .employee-image{
   margin-left:10px;

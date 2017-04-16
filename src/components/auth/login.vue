@@ -12,13 +12,13 @@
               <div class="form-group">
                   <label for="inputEmail" class="col-lg-2 control-label">Email</label>
                   <div class="col-lg-10">
-                      <input type="text" class="form-control" v-model="user.email" id="email" placeholder="email">
+                      <input type="email" class="form-control" v-model="user.email" id="email" placeholder="email">
                   </div>
               </div>
               <div class="form-group">
                   <label for="inputEmail" class="col-lg-2 control-label">Password</label>
                   <div class="col-lg-10">
-                      <input type="text" class="form-control" v-model="user.password" id="password" placeholder="password">
+                      <input type="password" class="form-control" v-model="user.password" id="password" placeholder="password">
                   </div>
               </div>
 

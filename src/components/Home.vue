@@ -6,11 +6,6 @@
     <!-- search -->
 
   <div class="container main" >
-      <div class="row">
-          <div class="col-md-4" style="margin-top:100px">
-
-          </div>
-      </div>
       <!-- <button type="button" name="button" @click="seedDB">Seed DB</button> -->
       <div class="row">
         <transition-group @enter="fadeInUp"  appear>
@@ -35,7 +30,7 @@ import Employee from './employee/employees.vue';
 import NavBar from './nav/navbar.vue';
 export default {
     name: 'app',
-    mixins:[EmployeeHttp],
+    mixins: [EmployeeHttp],
     components: {
         addEmployee: AddEmployee,
         employee: Employee,
@@ -47,7 +42,7 @@ export default {
             loading: false,
             loadingDone: false,
             searchQuery: '',
-            employeesMessage:''
+            employeesMessage: ''
         }
     },
     methods: {
@@ -69,7 +64,7 @@ export default {
             })
         },
         delete(employee) {
-          this.deleteEmployee(employee);
+            this.deleteEmployee(employee);
         },
         seedDB() {
             // this.$http.get('http://www.gocodigo.com/temporarypages/giordano/vue-directory/api/routes/employees.php')
@@ -81,13 +76,11 @@ export default {
                 })
         },
         get() {
-          this.getEmployees();
+            this.getEmployees();
         },
-
     },
     mounted() {
         this.get();
-
     },
     computed: {
         loggedIn() {
@@ -121,7 +114,6 @@ input[type="file"] {
 .banner {
     width: 100%;
     height: 300px;
-    background-color: red;
     margin-top: 60px;
     background-image: url('/src/assets/images/banner.jpg');
     background-size: contain;
@@ -143,6 +135,9 @@ input[type="file"] {
     transition: 2s width ease, .5s opacity ease;
 }
 
+.container.main {
+    padding-top: 20px;
+}
 
 
 @media (min-width: 1920px) {

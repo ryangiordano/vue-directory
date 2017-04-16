@@ -50,9 +50,13 @@
 
 <script>
 import {
+    EmployeeHttp
+} from '../../mixins/employee';
+import {
     eventBus
 } from '../../main.js';
 export default {
+    mixins:[EmployeeHttp],
     computed: {
         loggedIn() {
             return this.$store.getters.loggedIn;

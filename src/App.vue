@@ -1,5 +1,5 @@
 <template>
-<div id="app">
+<div id="app" >
   <div class="alert-table">
     <transition-group @enter="fadeInDown" @leave="fadeLeave" mode="out-in" :css="false"><alert :message="alert.message":color="alert.color" :id="alert.id" :key="index" v-for="(alert,index) in alerts" ></alert></transition-group>
   </div>
@@ -83,7 +83,8 @@ export default {
         this.alerts.unshift(alert);
         // this.alertMessage = message;
         // this.showAlert = true;
-      })
+      });
+
       eventBus.$on('removeAlert',(id)=>{
         this.alerts.splice(this.alerts.indexOf(alert.id),1);
       })

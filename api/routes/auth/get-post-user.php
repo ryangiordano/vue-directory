@@ -3,6 +3,7 @@ ini_set('display_errors',1);
 error_reporting(E_ALL);
 require_once '../../config/db-connect.php';
 require_once '../../config/config.php';
+require_once '../../library/jwt.php';
 require_once '../../controllers/user-controller.php';
 //the code here is what you put in routes
 

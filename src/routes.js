@@ -4,6 +4,11 @@ const Login = resolve => {
         resolve(require('./components/auth/login.vue'))
     })
 }
+const EmployeeDetail = resolve => {
+    require.ensure(['./components/employee/employee-detail.vue'], () => {
+        resolve(require('./components/employee/employee-detail.vue'))
+    })
+}
 
 const Home = resolve => {
     require.ensure(['./components/Home.vue'], () => {
@@ -13,6 +18,7 @@ const Home = resolve => {
 
 export const routes = [{
         path: '/',
+        name:'home',
         component: Home,
         name: 'Home'
     },
@@ -20,6 +26,11 @@ export const routes = [{
         path: '/login',
         component: Login,
         name: 'Login'
+    },
+    {
+        path: '/detail/:id',
+        name: 'detail',
+        component: EmployeeDetail
     },
     {
         path: '*',
