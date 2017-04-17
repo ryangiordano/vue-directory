@@ -165,7 +165,6 @@ export default {
         createImage(file) {
             var image = new Image();
             var reader = new FileReader();
-            this.hideMainImage = true;
             reader.readAsDataURL(file);
             reader.onload = (e) => {
                 this.image = e.target.result;
